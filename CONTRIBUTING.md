@@ -4,11 +4,6 @@ There are many ways you can contribute to this polyfill:
 
 ## Filling issues, fixing issues and improving the content
 If you find a bug, open an issue. If you know how to fix it or improve it, do a Pull Request!
-  
-## Adding new demos
-If you are interested in contributing with an interoperable, open source demo, open an issue and we will see how we can do that!
-
-If you want to collaborate just make sure your code passes the ESLint and JSCS rules we've set up!
 
 # Using Pull Requests
 If you want to contribute to the repo, please use a GitHub pull request. There are just a couple things to keep in mind:
