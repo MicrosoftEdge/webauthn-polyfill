@@ -1,12 +1,12 @@
 # Contributing to this demos
 
-There are many ways you can contribute to this demos:
+There are many ways you can contribute to this polyfill:
 
 ## Filling issues, fixing issues and improving the content
-Some of these demos have been migrated from the old TestDrive website and might contain some bugs with some browsers or the code doesn't follow the latest standards. We've tried to do out best to prevent this but we all know things can happen. If you find a bug, open an issue. If you know how to fix it or improve a demo, do a Pull Request!
+If you find a bug, open an issue. If you know how to fix it or improve it, do a Pull Request!
   
 ## Adding new demos
-If you are interesting in contributing with an interoperable, open source demo, open an issue and we will see how we can do that!
+If you are interested in contributing with an interoperable, open source demo, open an issue and we will see how we can do that!
 
 If you want to collaborate just make sure your code passes the ESLint and JSCS rules we've set up!
 
