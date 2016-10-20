@@ -1,6 +1,25 @@
 # About the polyfill
 
-The polyfill maps the current Web Authentication API on top of the Microsoft Edge preliminary implementation. The Microsoft Edge preliminary implementation is available on all Windows 10 computers that have been updated to the Windows Anniversary Update. You can check the version number by clicking Setting->System->About and check if the OS build is above or equal to 14393. 
+The polyfill maps the Web Authentication API on top of the Microsoft Edge preliminary implementation. The polyfill is up-to-date with the [Editor's draft](http://www.w3.org/TR/2016/WD-webauthn-20160928/) of Sept 29th. The polyfill is meant for experimentation purpose only but not for production purpose. 
+
+The Microsoft Edge preliminary implementation is available on all Windows 10 computers that have been updated to the Windows Anniversary Update. You can check the version number by clicking Setting->System->About and check if the OS build is above or equal to 14393. 
+
+## Limitation
+
+This implementation inherits its limitations on parameter values from the Edge implementation.
+
+Notes on limitations:
+The polyfill only works if the user has created a PIN (and optionally Hello gestures) for themselves in Settings->Accounts->Sign-in options. Otherwise, a error will be thrown.
+
+makeCredential:
+- the attestationChallenge parameter is ignored
+- the options parameter ignored, including timeOutSeconds, rpId, and excludeList
+- the returned signature is different between the current Web Authentication API and the polyfill
+
+getAssertion:
+- two parameters of the option parameter, timeoutSeconds and rpId, are ignored
+- the returned signature is different between the current Web Authentication API and the polyfill
+
 
 ## Contributing 
 
