@@ -27,7 +27,7 @@
 navigator.authentication = navigator.authentication || (function () {
 	'use strict';
 
-	const webauthnDB = (function() {
+	const webauthnDB = (function () {
 		const WEBAUTHN_DB_VERSION = 1;
 		const WEBAUTHN_DB_NAME = '_webauthn';
 		const WEBAUTHN_ID_TABLE = 'identities';
@@ -35,7 +35,7 @@ navigator.authentication = navigator.authentication || (function () {
 		let db = null;
 		let initPromise = null;
 
-		const initDB = function initDB() {
+		const initDB = function () {
 	 /* to remove database, use window.indexedDB.deleteDatabase('_webauthn'); */
 			return new Promise(function(resolve, reject) {
 				const req = indexedDB.open(WEBAUTHN_DB_NAME, WEBAUTHN_DB_VERSION);
@@ -56,7 +56,7 @@ navigator.authentication = navigator.authentication || (function () {
 			});
 		};
 
-		const doStore = function doStore(id, data) {
+		const doStore = function (id, data) {
 			if (!db) {
 				throw new Error('DB not initialised');
 			}
@@ -75,7 +75,7 @@ navigator.authentication = navigator.authentication || (function () {
 			});
 		};
 
-		const store = function store(id, data) {
+		const store = function (id, data) {
 			if (!initPromise) {
 				initPromise = initDB();
 			}
@@ -84,7 +84,7 @@ navigator.authentication = navigator.authentication || (function () {
 			});
 		};
 
-		const doGetAll = function doGetAll() {
+		const doGetAll = function () {
 			if (!db) {
 				throw new Error('DB not initialised');
 			}
@@ -110,7 +110,7 @@ navigator.authentication = navigator.authentication || (function () {
 			});
 		};
 
-		const getAll = function getAll() {
+		const getAll = function () {
 			if (!initPromise) {
 				initPromise = initDB();
 			}
@@ -125,7 +125,7 @@ navigator.authentication = navigator.authentication || (function () {
 	}());
 
 
-	const makeCredential = function makeCredential(accountInfo, cryptoParams) {
+	const makeCredential = function (accountInfo, cryptoParams) {
 		try {
 			// Need to know the display name of the relying party, the display name
 			// of the user, and the user id to create a credential. For every user
@@ -181,7 +181,7 @@ navigator.authentication = navigator.authentication || (function () {
 	};
 
 
-	const getCredList = function getCredList(allowlist) {
+	const getCredList = function (allowlist) {
 		// According to the spec, if allowList is supplied, the credentialList
 		// comees from the allowList; otherwise the credentialList is comes
 		// from searching all previously stored valid credentials
@@ -206,7 +206,7 @@ navigator.authentication = navigator.authentication || (function () {
 	};
 
 
-	const getAssertion = function getAssertion(challenge, options) {
+	const getAssertion = function (challenge, options) {
 		try {
 			const allowlist = options ? options.allowList : void 0;
 
