@@ -2,6 +2,21 @@
   "name": "mswebauthn-polyfill",
   "version": "1.0.0",
   "description": " Polyfill for mapping the most recent Web Authentication API on top of the Microsoft Edge preliminary implementation.",
+  "author": "MicrosoftEdge",
+  "contributors": [{
+    "name" : "Angelo Huakai Liao",
+    "email" : "huliao@microsoft.com"
+    }, {
+      "name" : "Adrian Bateman",
+      "email" : "adrianba@microsoft.com"
+    }, {
+      "name" : "Vijay Bharadwaj",
+      "email" : "vijaybh@microsoft.com"
+    }, {
+      "name" : "Rob Trace",
+      "email" : "robt@microsoft.com"
+    }
+  ],
   "main": "mswebauthn-polyfill",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +31,6 @@
     "msCredential",
     "edge"
   ],
-  "author": "Huakai Liao <huliao@microsoft.com> (http://angelolh.com)",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/MicrosoftEdge/webauthn-polyfill/issues"

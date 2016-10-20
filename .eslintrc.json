@@ -337,6 +337,7 @@
 		"no-useless-rename": "error",
 		"no-var": "warn",
 		"object-shorthand": "error",
+		"prefer-arrow-callback": "error",
 		"prefer-const": "warn",
 		"prefer-numeric-literals": "error",
 		"prefer-rest-params": "warn",
