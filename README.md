@@ -12,11 +12,11 @@ Notes on limitations:
 The polyfill only works if the user has created a PIN (and optionally Hello gestures) for themselves in Settings->Accounts->Sign-in options. Otherwise, a error will be thrown.
 
 create:
-- Few parameters are ignored: attestationChallenge, timeOutSeconds, rpId, excludeList, and authenticatorSelection.
+- Few parameters are ignored: challenge, timeout, rpId, excludeList, and authenticatorSelection.
 - The returned signature is different between the current Web Authentication API and the polyfill.
 
 get:
-- Few parameters are ignored: parameters, timeoutSeconds and rpId.
+- Few parameters are ignored: parameters, timeout, and rpId.
 - The returned signature is different between the current Web Authentication API and the polyfill.
 
 
