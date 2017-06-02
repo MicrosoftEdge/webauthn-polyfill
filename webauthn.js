@@ -12,7 +12,7 @@ top of the Microsoft Edge preliminary implementation.
 It is available for Edge 14 and above.
 
 The polyfill is up-to-date with the Editor's Draft of Sept 28th. Please refer
-to this link for the spec: http://www.w3.org/TR/2016/WD-webauthn-20160928/
+to this link for the spec: http://www.w3.org/TR/2017/WD-webauthn-20170505/
 
 This implementation inherits its limitations on parameter values from the
 Edge implementation.
@@ -22,20 +22,19 @@ The polyfill only works if the user has created a PIN (and optionally Hello
 gestures) for themselves in Settings->Accounts->Sign-in options. Otherwise,
 a error will be thrown.
 
-makeCredential:
-	- the attestationChallenge parameter is ignored
-	- the options parameter ignored, including timeOutSeconds, rpId, and excludeList
+create:
+	- Few parameters are ignored: attestationChallenge, timeOutSeconds, rpId, excludeList, and authenticatorSelection.
 	- the returned signature is different between the current Web Authentication API
 	  and the polyfill
 
-getAssertion:
- 	- two parameters of the option parameter, timeoutSeconds and rpId, are ignored
+get:
+ 	- Few parameters are ignored: parameters, timeoutSeconds and rpId.
  	- the returned signature is different between the current Web Authentication API
     and the polyfill
 */
 
 /* global msCredentials */
-navigator.authentication = navigator.authentication || (function () {
+navigator.credentials = navigator.credentials || (function () {
 	'use strict';
 
 	const webauthnDB = (function () {
@@ -69,7 +68,7 @@ navigator.authentication = navigator.authentication || (function () {
 
 		const doStore = function (id, data) {
 			if (!db) {
-				throw new Error('DB not initialised');
+				throw new Error('UnknownError');
 			}
 			return new Promise((resolve, reject) => {
 				const tx = db.transaction(WEBAUTHN_ID_TABLE, 'readwrite');
@@ -97,7 +96,7 @@ navigator.authentication = navigator.authentication || (function () {
 
 		const doGetAll = function () {
 			if (!db) {
-				throw new Error('DB not initialised');
+				throw new Error('UnknownError');
 			}
 
 			return new Promise((resolve, reject) => {
@@ -136,45 +135,55 @@ navigator.authentication = navigator.authentication || (function () {
 	}());
 
 
-	const makeCredential = function (accountInfo, cryptoParams) {
+	const create = function (createOptions) {
 		try {
 			/* Need to know the display name of the relying party, the display name
 			   of the user, and the user id to create a credential. For every user
 			   id, there is one credential stored by the authenticator. */
+
 			const acct = {
-				rpDisplayName: accountInfo.rpDisplayName,
-				userDisplayName: accountInfo.displayName,
-				userId: accountInfo.id
+				rpDisplayName: createOptions.rp.name,
+				userDisplayName: createOptions.user.DisplayName,
+				userId: createOptions.user.id
 			};
-			const params = [];
 
-			if (accountInfo.name) {
-				acct.accountName = accountInfo.name;
+			const encryptParams = [];
+
+			if (createOptions.user.name) {
+				acct.accountName = createOptions.user.name;
 			}
-			if (accountInfo.imageUri) {
-				acct.accountImageUri = accountInfo.imageUri;
+			if (createOptions.user.name) {
+				acct.accountImageUri = createOptions.user.icon;
 			}
 
-			for (const cryptoParam of cryptoParams) {
-				// The type identifier used to be 'FIDO_2_0' instead of 'ScopedCred'
-				if (cryptoParam.type === 'ScopedCred') {
-					params.push({ type: 'FIDO_2_0', algorithm: cryptoParam.algorithm });
-				} else {
-					params.push(cryptoParam);
+			for (const param of parameters) {
+				let cryptoAlgorithm = param.algorithm;
+
+				// RS256 is one of the RSASSA crypto algorithms.
+				if (param.algorithm === 'RS256') {
+					cryptoAlgorithm = 'RSASSA-PKCS1-v1_5';
 				}
+
+				let cryptoType = param.type;
+
+				// The type identifier used to be 'FIDO_2_0' instead of 'ScopedCred'
+				if (param.type === 'public-key') {
+					cryptoType = 'FIDO_2_0';
+				}
+
+				encryptParams.push({ type: cryptoType, algorithm: cryptoAlgorithm });
 			}
 
-			return msCredentials.makeCredential(acct, params)
+			return msCredentials.makeCredential(acct, encryptParams)
 				.then((cred) => {
 					if (cred.type === 'FIDO_2_0') {
 					// The returned credential should be immutable, aka freezed.
 						const result = Object.freeze({
-							credential: {type: 'ScopedCred', id: cred.id},
-							publicKey: JSON.parse(cred.publicKey),
-							attestation: cred.attestation
+							credential: {type: 'public-key', id: cred.rawId},
+							attestation: cred.response.attestationObject
 						});
 
-						return webauthnDB.store(result.credential.id, accountInfo).then(() => {
+						return webauthnDB.store(result.rawId, accountInfo).then(() => {
 							return result;
 						});
 					}
@@ -182,7 +191,7 @@ navigator.authentication = navigator.authentication || (function () {
 					return cred;
 				})
 			.catch((err) => {
-				console.log(`makeCredential failed: ${err}`);
+				console.log(`create failed: ${err}`);
 				throw new Error('NotAllowedError');
 			});
 		} catch (err) {
@@ -203,7 +212,7 @@ navigator.authentication = navigator.authentication || (function () {
 				return descriptor;
 			}));
 		}
-		return webauthnDB.getAll()
+		webauthnDB.getAll()
 			.then((list) => {
 				return Promise.resolve(list.map((descriptor) => {
 					return { type: 'FIDO_2_0', id: descriptor.id};
@@ -215,47 +224,55 @@ navigator.authentication = navigator.authentication || (function () {
 	};
 
 
-	const getAssertion = function (challenge, options) {
-		let allowlist;
-		try {
-			 allowlist = options ? options.allowList : void 0;
-		} catch (e) {
+	const get = function (credentialRequests) {
+
+		const publicKeyCredRequest = credentialRequests.publicKey
+
+		if (publicKeyCredRequest) {
+			let allowlist;
+			try {
+				allowlist = publicKeyCredRequest ? publicKeyCredRequest.allowList : void 0;
+			} catch (e) {
+				throw new Error('NotAllowedError');
+			}
+
+			return getCredList(allowlist).then((credList) => {
+				const filter = { accept: credList };
+
+				return msCredentials.getAssertion(challenge, filter);
+			})
+			.then((sig) => {
+				if (sig.type === 'FIDO_2_0') {
+					return Promise.resolve(Object.freeze({
+
+						rawId: sig.id,
+						response: {
+							clientDataJSON: sig.signature.clientData,
+							authenticatorData: sig.signature.authnrData,
+							signature: sig.signature.signature
+						}
+
+					}));
+				}
+
+				return Promise.resolve(sig);
+			})
+			.catch((err) => {
+				console.log(`getAssertion failed: ${err}`);
+				throw new Error('NotAllowedError');
+			});
+
+		} else {
+			console.log(`The current browser only supports Public Key credential`);
 			throw new Error('NotAllowedError');
 		}
 
-		return getCredList(allowlist).then((credList) => {
-			const filter = { accept: credList };
-			let sigParams;
-
-			if (options && options.extensions && options.extensions.webauthn_txAuthSimple) {
-				sigParams = { userPrompt: options.extensions.webauthn_txAuthSimple };
-			}
-
-			return msCredentials.getAssertion(challenge, filter, sigParams);
-		})
-		.then((sig) => {
-			if (sig.type === 'FIDO_2_0') {
-				return Promise.resolve(Object.freeze({
-
-					credential: {type: 'ScopedCred', id: sig.id},
-					clientData: sig.signature.clientData,
-					authenticatorData: sig.signature.authnrData,
-					signature: sig.signature.signature
-
-				}));
-			}
-
-			return Promise.resolve(sig);
-		})
-		.catch((err) => {
-			console.log(`getAssertion failed: ${err}`);
-			throw new Error('NotAllowedError');
-		});
+		
 	};
 
 
 	return {
-		makeCredential,
-		getAssertion
+		create,
+		get
 	};
 }());
