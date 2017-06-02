@@ -11,8 +11,8 @@ This file implements a polyfill that maps current Web Authentication API on
 top of the Microsoft Edge preliminary implementation.
 It is available for Edge 14 and above.
 
-The polyfill is up-to-date with the Editor's Draft of Sept 28th. Please refer
-to this link for the spec: http://www.w3.org/TR/2017/WD-webauthn-20170505/
+The polyfill is up-to-date with the 5th working draft of the Web Authentication API 
+specification. Please refer to this link for the spec: http://www.w3.org/TR/2017/WD-webauthn-20170505/
 
 This implementation inherits its limitations on parameter values from the
 Edge implementation.
