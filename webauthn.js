@@ -213,7 +213,7 @@ navigator.credentials = navigator.credentials || (function () {
 				return descriptor;
 			}));
 		}
-		webauthnDB.getAll()
+		return webauthnDB.getAll()
 			.then((list) => {
 				return Promise.resolve(list.map((descriptor) => {
 					return { type: 'FIDO_2_0', id: descriptor.id};
