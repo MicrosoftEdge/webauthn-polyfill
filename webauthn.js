@@ -157,7 +157,7 @@ navigator.credentials = navigator.credentials || (function () {
 				acct.accountImageUri = makeCredentialOptions.user.icon;
 			}
 
-			for (const param of parameters) {
+			for (const param of makeCredentialOptions.parameters) {
 				let cryptoAlgorithm = param.algorithm;
 
 				// RS256 is one of the RSASSA crypto algorithms.
