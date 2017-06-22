@@ -179,11 +179,11 @@ navigator.credentials = navigator.credentials || (function () {
 					if (cred.type === 'FIDO_2_0') {
 					// The returned credential should be immutable, aka freezed.
 						const result = Object.freeze({
-							credential: {type: 'public-key', id: cred.rawId},
+							credential: {type: 'public-key', id: cred.id},
 							attestation: cred.response.attestationObject
 						});
 
-						return webauthnDB.store(result.rawId, accountInfo).then(() => {
+						return webauthnDB.store(cred.id, accountInfo).then(() => {
 							return result;
 						});
 					}
