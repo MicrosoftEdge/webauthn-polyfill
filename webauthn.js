@@ -141,22 +141,23 @@ navigator.credentials = navigator.credentials || (function () {
 			   of the user, and the user id to create a credential. For every user
 			   id, there is one credential stored by the authenticator. */
 
+			const makeCredentialOptions = createOptions.publicKey;
 			const acct = {
-				rpDisplayName: createOptions.rp.name,
-				userDisplayName: createOptions.user.DisplayName,
-				userId: createOptions.user.id
+				rpDisplayName: makeCredentialOptions.rp.name,
+				userDisplayName: makeCredentialOptions.user.DisplayName,
+				userId: makeCredentialOptions.user.id
 			};
 
 			const encryptParams = [];
 
-			if (createOptions.user.name) {
+			if (makeCredentialOptions.user.name) {
 				acct.accountName = createOptions.user.name;
 			}
-			if (createOptions.user.name) {
-				acct.accountImageUri = createOptions.user.icon;
+			if (makeCredentialOptions.user.name) {
+				acct.accountImageUri = makeCredentialOptions.user.icon;
 			}
 
-			for (const param of parameters) {
+			for (const param of makeCredentialOptions.parameters) {
 				let cryptoAlgorithm = param.algorithm;
 
 				// RS256 is one of the RSASSA crypto algorithms.
