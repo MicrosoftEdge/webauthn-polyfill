@@ -180,7 +180,7 @@ navigator.credentials = navigator.credentials || (function () {
 					// The returned credential should be immutable, aka freezed.
 						const result = Object.freeze({
 							credential: {type: 'public-key', id: cred.id},
-							attestation: cred.response.attestationObject
+							attestation: cred.attestation
 						});
 
 						return webauthnDB.store(cred.id, accountInfo).then(() => {
