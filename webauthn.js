@@ -167,7 +167,7 @@ navigator.credentials = navigator.credentials || (function () {
 
 				let cryptoType = param.type;
 
-				// The type identifier used to be 'FIDO_2_0' instead of 'ScopedCred'
+				// The type identifier used to be 'FIDO_2_0' instead of 'public-key'
 				if (param.type === 'public-key') {
 					cryptoType = 'FIDO_2_0';
 				}
@@ -207,7 +207,7 @@ navigator.credentials = navigator.credentials || (function () {
 		   previously stored valid credentials. */
 		if (allowlist) {
 			return Promise.resolve(allowlist.map((descriptor) => {
-				if (descriptor.type === 'ScopedCred') {
+				if (descriptor.type === 'public-key') {
 					return { type: 'FIDO_2_0', id: descriptor.id};
 				}
 				return descriptor;
