@@ -144,16 +144,16 @@ navigator.credentials = navigator.credentials || (function () {
 			const makeCredentialOptions = createOptions.publicKey;
 			const acct = {
 				rpDisplayName: makeCredentialOptions.rp.name,
-				userDisplayName: makeCredentialOptions.user.DisplayName,
+				userDisplayName: makeCredentialOptions.user.displayName,
 				userId: makeCredentialOptions.user.id
 			};
 
 			const encryptParams = [];
 
 			if (makeCredentialOptions.user.name) {
-				acct.accountName = createOptions.user.name;
+				acct.accountName = makeCredentialOptions.user.name;
 			}
-			if (makeCredentialOptions.user.name) {
+			if (makeCredentialOptions.user.icon) {
 				acct.accountImageUri = makeCredentialOptions.user.icon;
 			}
 
@@ -181,10 +181,11 @@ navigator.credentials = navigator.credentials || (function () {
 					// The returned credential should be immutable, aka freezed.
 						const result = Object.freeze({
 							credential: {type: 'public-key', id: cred.id},
+							publicKey: JSON.parse(cred.publicKey),
 							attestation: cred.attestation
 						});
 
-						return webauthnDB.store(cred.id, accountInfo).then(() => {
+						return webauthnDB.store(cred.id, acct).then(() => {
 							return result;
 						});
 					}
